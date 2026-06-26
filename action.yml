@@ -18,7 +18,7 @@ runs:
       uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8  # v6.0.0
       with:
         path: ~/.cache/setup-yamlfmt
-        key: setup-yamlfmt-1|${{ inputs.version }}|${{ inputs.checksum }}
+        key: setup-yamlfmt-2|${{ inputs.version }}|${{ inputs.checksum }}
 
     - name: Download yamlfmt
       if: steps.cache-yamlfmt.outputs.cache-hit != 'true'
@@ -28,7 +28,7 @@ runs:
         YAMLFMT_CHECKSUM: ${{ inputs.checksum }}
       run: |
         mkdir -p ~/.cache/setup-yamlfmt
-        ./download-artifact.sh \
+        "${GITHUB_ACTION_PATH}/download-artifact.sh" \
           "https://github.com/google/yamlfmt/releases/download/v${YAMLFMT_VERSION}/yamlfmt_${YAMLFMT_VERSION}_Linux_x86_64.tar.gz" \
           ~/.cache/setup-yamlfmt/artifact.tar.gz \
           "${YAMLFMT_CHECKSUM}"
