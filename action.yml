@@ -1,37 +1,37 @@
 # yaml-language-server: $schema=https://www.schemastore.org/github-action.json
 
 name: 'Setup yamlfmt'
-description: 'Install yamlfmt'
+description: 'Installs yamlfmt in your GitHub workflows'
 inputs:
   version:
-    description: 'Version to install (without the "v"), ex: 0.21.0'
+    description: 'Version to install, ex: 0.21.0'
     default: '0.21.0'
   checksum:
-    description: 'SHA256 checksum of linux amd64 release artifact'
+    description: 'SHA256 checksum of download artifact'
     default: '1f300d9257b232bb3b541d7fb1b0e6b3c121bcbab381c86cd38cb8722be8a566'
 
 runs:
   using: "composite"
   steps:
-    - id: cache-yamlfmt
+    - id: cache
       name: Cache
-      uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8  # v6.0.0
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
       with:
         path: ~/.cache/setup-yamlfmt
         key: setup-yamlfmt-2|${{ inputs.version }}|${{ inputs.checksum }}
 
     - name: Download yamlfmt
-      if: steps.cache-yamlfmt.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       env:
-        YAMLFMT_VERSION: ${{ inputs.version }}
-        YAMLFMT_CHECKSUM: ${{ inputs.checksum }}
+        VERSION: ${{ inputs.version }}
+        CHECKSUM: ${{ inputs.checksum }}
       run: |
         mkdir -p ~/.cache/setup-yamlfmt
         "${GITHUB_ACTION_PATH}/download-artifact.sh" \
-          "https://github.com/google/yamlfmt/releases/download/v${YAMLFMT_VERSION}/yamlfmt_${YAMLFMT_VERSION}_Linux_x86_64.tar.gz" \
+          "https://github.com/google/yamlfmt/releases/download/v${VERSION}/yamlfmt_${VERSION}_Linux_x86_64.tar.gz" \
           ~/.cache/setup-yamlfmt/artifact.tar.gz \
-          "${YAMLFMT_CHECKSUM}"
+          "${CHECKSUM}"
 
     - name: Install yamlfmt
       shell: bash

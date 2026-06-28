@@ -1,0 +1,11 @@
+_commit: b5e8477
+_src_path: gh:pcrockett/template-setup-action
+action_description: Installs yamlfmt in your GitHub workflows
+action_human_friendly_name: Setup yamlfmt
+action_name: setup-yamlfmt
+github_org: ''
+tool_doc_url: https://github.com/google/yamlfmt
+tool_download_url: https://github.com/google/yamlfmt/releases/download/v${VERSION}/yamlfmt_${VERSION}_Linux_x86_64.tar.gz
+tool_latest_checksum: 1f300d9257b232bb3b541d7fb1b0e6b3c121bcbab381c86cd38cb8722be8a566
+tool_latest_version: 0.21.0
+tool_name: yamlfmt
