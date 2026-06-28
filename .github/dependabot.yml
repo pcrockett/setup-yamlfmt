@@ -6,3 +6,5 @@ updates:
       prefix: "chore(deps)"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
