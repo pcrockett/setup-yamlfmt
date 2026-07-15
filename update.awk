@@ -11,8 +11,9 @@
 # ...surgically update those defaults with a given VERSION and CHECKSUM.
 #
 # we could do this much more easily using `yq` or nushell, however those approaches
-# destroy file formatting, comments, etc. this AWK-based approach will only touch the
-# characters it needs to.
+# destroy file formatting, comments, etc.
+#
+# this AWK-based approach, while ugly, will only touch the characters it needs to.
 
 BEGIN {
   inputs = 0

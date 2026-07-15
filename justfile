@@ -10,7 +10,7 @@ lint:
 release:
     gh release create --generate-notes --draft
 
-# Update yamlfmt default version and checksum
+# Update default version and checksum to latest GitHub release
 update:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -31,6 +31,12 @@ update:
             --jq ".assets.[] | select(.name == \"yamlfmt_${version}_Linux_x86_64.tar.gz\").digest"
     )"
     checksum="$(echo "${checksum}" | awk -F: '$1 == "sha256" { printf($2) }')"
+
+    if [ "${checksum}" == "" ]; then
+        echo "unable to determine checksum for ${artifact_name} at ${latest_tag}"
+        exit 1
+    fi
+
     temp_dir="$(mktemp --directory)"
     cleanup() {
         rm -rf "${temp_dir}"
