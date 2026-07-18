@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-workflow.json
+
+name: Check for yamlfmt updates
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "38 4 * * 6"  # every Saturday at 04:38 UTC   <https://crontab.guru/#38_4_*_*_6>
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  UPDATE_BRANCH_NAME: "autoupdate"
+
+jobs:
+
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: pcrockett/setup-just@bfd0f2be2991d96e39d8d4c3bba4018d44857339  # v0.1.0
+
+      - run: |
+          if ! git switch --create "${UPDATE_BRANCH_NAME}" "origin/${UPDATE_BRANCH_NAME}"; then
+            git switch --create "${UPDATE_BRANCH_NAME}"
+          fi
+
+          just update
+          if [ "$(git status --porcelain)" == "" ]; then
+            echo "Already current!"
+            exit 0
+          fi
+
+          new_version="$(yq eval '.inputs.version.default' action.yml)"
+          echo "Found update: ${new_version}"
+          git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update to version ${new_version}"
+          git push origin "${UPDATE_BRANCH_NAME}"
+
+          pr_title="Update to version ${new_version}"
+          if gh pr view >/dev/null 2>&1; then
+            echo "Updating existing PR..."
+            gh pr edit --title "${pr_title}"
+          else
+            echo "Creating new PR..."
+            gh pr create --title "${pr_title}" --body ""
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
