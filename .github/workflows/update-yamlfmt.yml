@@ -34,26 +34,26 @@ jobs:
           fi
 
           just update
-          if [ "$(git status --porcelain)" == "" ]; then
-            echo "Already current!"
-            exit 0
-          fi
 
           new_version="$(yq eval '.inputs.version.default' action.yml)"
-          echo "Found update: ${new_version}"
-          git add .
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update to version ${new_version}"
-          git push origin "${UPDATE_BRANCH_NAME}"
+          if [ "$(git status --porcelain)" != "" ]; then
+            echo "Found update: ${new_version}"
+            git add .
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update to version ${new_version}"
+            git push origin "${UPDATE_BRANCH_NAME}"
+          fi
 
           pr_title="Update to version ${new_version}"
           if gh pr view >/dev/null 2>&1; then
             echo "Updating existing PR..."
             gh pr edit --title "${pr_title}"
-          else
+          elif [ "$(git diff "main..${UPDATE_BRANCH_NAME}")" != "" ]; then
             echo "Creating new PR..."
             gh pr create --title "${pr_title}" --body ""
+          else
+            echo "Already current!"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
