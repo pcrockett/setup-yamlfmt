@@ -46,7 +46,7 @@ jobs:
           fi
 
           pr_title="Update to version ${new_version}"
-          if gh pr view >/dev/null 2>&1; then
+          if [ "$(gh pr view --json state --jq .state 2>/dev/null)" == "OPEN" ]; then
             echo "Updating existing PR..."
             gh pr edit --title "${pr_title}"
           elif [ "$(git diff "main..${UPDATE_BRANCH_NAME}")" != "" ]; then
