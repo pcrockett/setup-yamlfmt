@@ -6,9 +6,9 @@ _default:
 lint:
     pre-commit run --all --show-diff-on-failure --color always
 
-# Generate draft GitHub release
+# Generate GitHub release
 release:
-    gh release create --generate-notes --draft
+    gh release create --generate-notes
 
 # Update default version and checksum to latest GitHub release
 update:

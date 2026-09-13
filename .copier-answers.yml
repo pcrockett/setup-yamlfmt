@@ -1,4 +1,4 @@
-_commit: d65ffab
+_commit: effb709
 _src_path: gh:pcrockett/template-setup-action
 action_description: Installs yamlfmt in your GitHub workflows
 action_human_friendly_name: Setup yamlfmt
